@@ -92,12 +92,6 @@ const PlaceDetail = ({ route, navigation }) => {
     <ScrollView ref={scrollRef} style={styles.container}>
       <View style={styles.headerBar}>
         <Text style={styles.headerText}>{place.name}</Text>
-        <TouchableOpacity
-          style={styles.reviewButton}
-          onPress={() => navigation.navigate("Review", { placeId })}
-        >
-          <Text style={styles.reviewButtonText}>รีวิว</Text>
-        </TouchableOpacity>
       </View>
 
       <View style={styles.metaRow}>
@@ -135,24 +129,29 @@ const PlaceDetail = ({ route, navigation }) => {
           </TouchableOpacity>
         ))}
       </View>
-
-      <View style={styles.imagesSection}>
-        <Image source={place.images[0]} style={styles.mainImageLarge} />
-        <View style={styles.grid4Images}>
-          {place.images.slice(1, 5).map((img, index) => (
-            <Image key={index} source={img} style={styles.gridImage} />
-          ))}
+      <View style={styles.metaRow}>
+        <View style={styles.imagesSection}>
+          <Image source={place.images[0]} style={styles.mainImageLarge} />
+          <View style={styles.grid4Images}>
+            {place.images.slice(1, 5).map((img, index) => (
+              <Image key={index} source={img} style={styles.gridImage} />
+            ))}
+          </View>
         </View>
       </View>
-
-      <Text style={styles.description}>{place.description}</Text>
+      <View style={styles.metaRow}>
+        <Text style={styles.description}>{place.description}</Text>
+      </View>
       <Text style={styles.description}>
         <Icon name="map-pin" type="feather" size={16} /> {place.address}
       </Text>
-
       {place.latitude && place.longitude && (
         <View ref={sectionRefs.map} style={styles.mapContainer}>
-          <TouchableOpacity onPress={openMap} activeOpacity={0.9} style={{ flex: 1 }}>
+          <TouchableOpacity
+            onPress={openMap}
+            activeOpacity={0.9}
+            style={{ flex: 1 }}
+          >
             <MapView
               provider={PROVIDER_DEFAULT}
               style={styles.mapStyle}
@@ -176,35 +175,79 @@ const PlaceDetail = ({ route, navigation }) => {
         </View>
       )}
 
-      {["directions", "buses", "pier", "open", "locationNote"].map((field, idx) => (
+      {["directions", "buses", "pier"].map((field, idx) => (
         <Text key={idx} style={styles.description}>
           <Icon
-            name={{
-              directions: "map",
-              buses: "truck",
-              pier: "navigation",
-              open: "clock",
-              locationNote: "info",
-            }[field]}
+            name={
+              {
+                directions: "map",
+                buses: "truck",
+                pier: "navigation",
+              }[field]
+            }
             type="feather"
             size={16}
-          /> {place[field]}
+          />{" "}
+          {place[field]}
+        </Text>
+      ))}
+      <View style={styles.metaRow}></View>
+      {["open"].map((field, idx) => (
+        <Text key={idx} style={styles.description}>
+          <Icon
+            name={
+              {
+                open: "clock",
+              }[field]
+            }
+            type="feather"
+            size={16}
+          />{" "}
+          {place[field]}
+        </Text>
+      ))}
+      <View style={styles.metaRow}></View>
+
+      {[, "locationNote"].map((field, idx) => (
+        <Text key={idx} style={styles.description}>
+          <Icon
+            name={
+              {
+                locationNote: "info",
+              }[field]
+            }
+            type="feather"
+            size={16}
+          />{" "}
+          {place[field]}
         </Text>
       ))}
 
+      <View style={styles.metaRow}></View>
       <View ref={sectionRefs.offerings}>
-        <Text style={styles.subTitle}>ของบูชา</Text>
+        <Text style={styles.description}>ของบูชา</Text>
         {place.offerings.map((item, idx) => (
-          <Text key={idx} style={styles.description}>• {item}</Text>
+          <Text key={idx} style={styles.description}>
+            • {item}
+          </Text>
         ))}
       </View>
-
+      <View style={styles.metaRow}></View>
       <View ref={sectionRefs.mantra}>
-        <Text style={styles.subTitle}>คาถา</Text>
+        <Text style={styles.description}>คาถา</Text>
         {place.mantras.map((line, idx) => (
-          <Text key={idx} style={styles.description}>{line}</Text>
+          <Text key={idx} style={styles.description}>
+            {line}
+          </Text>
         ))}
       </View>
+      <View style={styles.metaRow}></View>
+      <TouchableOpacity
+        style={styles.reviewButton}
+        onPress={() => navigation.navigate("Review", { placeId })}
+      >
+        <Text style={styles.reviewButtonText}>รีวิว</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -225,7 +268,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingHorizontal: 16,
     paddingVertical: 6,
-    borderRadius: 20,
     borderColor: "#ccc",
     borderWidth: 1,
   },
@@ -235,7 +277,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: "red",
   },
   metaInfoRow: {
     flexDirection: "row",
@@ -246,7 +288,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  status: { fontSize: 13, fontWeight: "600", color: "#00CC99", marginRight: 12 },
+  status: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#00CC99",
+    marginRight: 12,
+  },
   distance: { fontSize: 13, color: "#333" },
   ratingRow: { flexDirection: "row", marginBottom: 6 },
   tagsRow: {
@@ -288,10 +335,11 @@ const styles = StyleSheet.create({
   },
   description: {
     paddingHorizontal: 16,
-    fontSize: 13,
+    fontSize: 15,
     lineHeight: 20,
     color: "#333",
     marginBottom: 8,
+    marginTop: 24,
   },
   subTitle: {
     fontSize: 16,
